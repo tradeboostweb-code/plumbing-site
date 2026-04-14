@@ -1229,8 +1229,9 @@ window.addEventListener('scroll', () => {
   document.getElementById('nav').classList.toggle('scrolled', sy > 50);
 
   if (!scrollSec || !ready) return;
-  const rect = scrollSec.getBoundingClientRect();
-  const sH   = scrollSec.offsetHeight - window.innerHeight;
+  const rect       = scrollSec.getBoundingClientRect();
+  const stickyH    = canvas.offsetHeight || window.innerHeight;
+  const sH         = scrollSec.offsetHeight - stickyH;
   const into  = -rect.top;
   if (into < 0 || into > sH) return;
 
