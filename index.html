@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>[Your Company] — Drain Clearing</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231b5ce0'/><text y='24' x='5' font-size='22' font-family='serif'>🔧</text></svg>">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231b5ce0'/><text y='24' x='5' font-size='22' font-family='serif'>🔧</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+/* ─────────────────────────────────────────────
+   TOKENS  — warm off-white, near-black, one blue
+───────────────────────────────────────────── */
+:root {
+  --cream:     #f9f7f4;
+  --white:     #ffffff;
+  --ink:       #111010;
+  --ink2:      #4a4540;
+  --ink3:      #9a9490;
+  --rule:      rgba(17,16,16,0.10);
+  --rule2:     rgba(17,16,16,0.06);
+  --blue:      #1b5ce0;
+  --blue-pale: rgba(27,92,224,0.07);
+  --ff-disp:   'Bebas Neue', Impact, sans-serif;
+  --ff-body:   'DM Sans', system-ui, sans-serif;
+  --ff-mono:   'DM Mono', monospace;
+  --max:       1080px;
+  --pad:       clamp(20px, 5vw, 80px);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: auto; -webkit-text-size-adjust: 100%; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--ff-body);
+  font-weight: 300;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection { background: var(--ink); color: var(--cream); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--ink3); }
+
+/* ─────────────────────────────────────────────
+   SCROLL PROGRESS — hairline
+───────────────────────────────────────────── */
+#prog {
+  position: fixed; top: 0; left: 0; height: 1px; width: 0%;
+  background: var(--ink); z-index: 1000; transition: width 0.06s linear;
+}
+
+/* ─────────────────────────────────────────────
+   LOADER
+───────────────────────────────────────────── */
+#loader {
+  position: fixed; inset: 0; background: var(--cream); z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+  transition: opacity 0.6s, visibility 0.6s;
+}
+#loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.loader-mark {
+  font-family: var(--ff-disp); font-size: 14px; font-weight: 400; font-style: italic;
+  color: var(--ink2); letter-spacing: 0.5px;
+}
+.loader-mark strong { font-style: normal; font-weight: 700; color: var(--ink); }
+
+.loader-bar-wrap {
+  width: 160px; height: 1px; background: var(--rule); position: relative;
+}
+.loader-bar-fill {
+  position: absolute; top: 0; left: 0; height: 1px; width: 0%;
+  background: var(--ink); transition: width 0.1s linear;
+}
+.loader-pct {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 2px; text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   NAVBAR
+───────────────────────────────────────────── */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 20px var(--pad);
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+#nav.scrolled {
+  top: 12px; left: 50%; right: auto; transform: translateX(-50%);
+  width: min(900px, 94vw); padding: 14px 28px;
+  background: rgba(249,247,244,0.96);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+}
+
+.nav-logo {
+  font-family: var(--ff-disp); font-size: 17px; font-weight: 500;
+  color: var(--ink); text-decoration: none; letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 10px;
+}
+.nav-logo-dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0;
+}
+
+.nav-links {
+  display: flex; align-items: center; gap: 32px; list-style: none;
+}
+.nav-links a {
+  font-size: 13px; font-weight: 400; color: var(--ink2);
+  text-decoration: none; letter-spacing: 0.2px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--ink); }
+
+.nav-cta-btn {
+  font-size: 13px; font-weight: 500; color: var(--blue) !important;
+  border-bottom: 1px solid var(--blue);
+  padding-bottom: 1px;
+  transition: opacity 0.2s !important;
+}
+.nav-cta-btn:hover { opacity: 0.65 !important; }
+
+.nav-mobile-btn {
+  display: none; font-size: 13px; font-weight: 500; color: var(--blue);
+  text-decoration: none; border-bottom: 1px solid var(--blue); padding-bottom: 1px;
+}
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+.hero {
+  min-height: 100svh;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 0 var(--pad) clamp(52px, 8vh, 88px);
+  position: relative; overflow: hidden;
+  border-bottom: 1px solid var(--rule);
+  padding-top: 72px; /* clears fixed navbar */
+}
+
+/* Video background */
+.hero-video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+  pointer-events: none; user-select: none;
+  z-index: 0;
+}
+/* Overlay — fades cream in from all edges so video feels contained */
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom,  #f9f7f4 0%, transparent 22%, transparent 78%, #f9f7f4 100%),
+    linear-gradient(to right,   #f9f7f4 0%, transparent 18%, transparent 82%, #f9f7f4 100%);
+  z-index: 0;
+}
+
+.hero-content { max-width: var(--max); position: relative; z-index: 1; }
+
+.hero-label {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  color: var(--ink3); letter-spacing: 3px; text-transform: uppercase;
+  margin-bottom: clamp(16px, 2.5vw, 24px);
+  animation: fadeIn 0.8s ease both 0.2s;
+}
+.hero-label::before {
+  content: ''; width: 24px; height: 1px; background: var(--ink3);
+}
+
+h1.hero-h1 {
+  font-family: var(--ff-disp);
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 400; line-height: 1.0; letter-spacing: 0.02em;
+  color: var(--ink); margin-bottom: clamp(24px, 3vw, 36px);
+  animation: fadeIn 0.8s ease both 0.3s;
+  text-shadow: 0 1px 12px rgba(249,247,244,0.4);
+}
+h1.hero-h1 em { font-style: normal; color: var(--blue); }
+
+.hero-row {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 32px; flex-wrap: wrap;
+  animation: fadeIn 0.8s ease both 0.42s;
+}
+
+.hero-sub {
+  font-size: clamp(15px, 1.8vw, 17px); font-weight: 300; color: var(--ink2);
+  line-height: 1.7; max-width: 400px;
+}
+
+.hero-btns {
+  display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0;
+}
+
+/* Buttons — minimal, ink based */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; text-decoration: none; border: none;
+  transition: all 0.22s; white-space: nowrap;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+  letter-spacing: 0.1px;
+}
+.btn-ink {
+  background: var(--ink); color: var(--cream);
+  padding: 13px 28px; border-radius: 3px;
+}
+.btn-ink:hover { background: #222; }
+.btn-ink:active { background: var(--ink); }
+
+.btn-blue {
+  background: var(--blue); color: #fff;
+  padding: 13px 28px; border-radius: 3px;
+}
+.btn-blue:hover { background: #1650c7; }
+.btn-blue:active { background: var(--blue); }
+
+.btn-outline {
+  background: transparent; color: var(--ink);
+  padding: 13px 28px; border-radius: 3px;
+  border: 1px solid var(--rule2);
+  /* hairline border — very subtle */
+  box-shadow: inset 0 0 0 1px rgba(17,16,16,0.14);
+}
+.btn-outline:hover { box-shadow: inset 0 0 0 1px rgba(17,16,16,0.4); }
+
+.scroll-hint {
+  position: absolute; bottom: clamp(20px, 4vh, 32px); right: var(--pad);
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 2px; text-transform: uppercase;
+  animation: fadeIn 0.8s ease both 0.6s;
+}
+.scroll-hint::after {
+  content: ''; width: 32px; height: 1px; background: var(--ink3);
+  animation: scrollPulse 2.4s ease infinite;
+}
+@keyframes scrollPulse { 0%,100%{transform:scaleX(1); opacity:0.5} 50%{transform:scaleX(1.5); opacity:1} }
+@keyframes fadeIn { from{opacity:0; transform:translateY(16px)} to{opacity:1; transform:translateY(0)} }
+
+/* ─────────────────────────────────────────────
+   TICKER — marquee trust band
+───────────────────────────────────────────── */
+.ticker {
+  border-bottom: 1px solid var(--rule); overflow: hidden;
+  padding: 0; background: var(--white);
+}
+.ticker-inner {
+  display: flex; animation: ticker 28s linear infinite; width: max-content;
+}
+.ticker-inner:hover { animation-play-state: paused; }
+.ticker-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 15px 32px; white-space: nowrap; flex-shrink: 0;
+  font-size: 12px; font-weight: 400; color: var(--ink2);
+  letter-spacing: 0.3px;
+  border-right: 1px solid var(--rule);
+}
+.ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--blue); flex-shrink: 0; }
+@keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+/* ─────────────────────────────────────────────
+   GOOGLE REVIEWS
+───────────────────────────────────────────── */
+.reviews-section {
+  padding: clamp(56px, 8vw, 96px) var(--pad);
+  border-bottom: 1px solid var(--rule);
+  background: var(--white);
+}
+.reviews-inner { max-width: var(--max); margin: 0 auto; }
+
+.reviews-top {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap;
+  margin-bottom: clamp(36px, 5vw, 56px);
+  padding-bottom: 24px; border-bottom: 1px solid var(--rule);
+}
+.reviews-badge {
+  display: flex; align-items: center; gap: 20px;
+}
+.reviews-g-icon {
+  font-family: var(--ff-mono); font-size: 11px; color: var(--ink3);
+  letter-spacing: 2px; text-transform: uppercase;
+  border: 1px solid var(--rule); border-radius: 3px;
+  padding: 6px 12px;
+}
+.reviews-score {
+  font-family: var(--ff-disp); font-size: clamp(36px, 5vw, 52px);
+  font-weight: 400; color: var(--ink); line-height: 1;
+}
+.reviews-score-detail { display: flex; flex-direction: column; gap: 4px; }
+.reviews-stars { color: #f5a623; font-size: 16px; letter-spacing: 2px; }
+.reviews-count {
+  font-size: 12px; font-weight: 300; color: var(--ink3); letter-spacing: 0.3px;
+}
+.reviews-count strong { color: var(--ink2); font-weight: 400; }
+
+.reviews-kicker {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 3px; text-transform: uppercase;
+  display: flex; align-items: center; gap: 8px;
+}
+.reviews-kicker::before { content:''; width: 18px; height: 1px; background: var(--ink3); }
+
+.reviews-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; border-left: 1px solid var(--rule);
+}
+.review-card {
+  padding: clamp(24px, 3vw, 36px);
+  border-right: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.review-card-stars { color: #f5a623; font-size: 13px; letter-spacing: 1px; }
+.review-text {
+  font-size: 14px; font-weight: 300; color: var(--ink2);
+  line-height: 1.75; flex: 1;
+  font-style: italic;
+}
+.review-meta {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 14px; border-top: 1px solid var(--rule2);
+}
+.review-name {
+  font-size: 13px; font-weight: 500; color: var(--ink);
+}
+.review-date {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 1px;
+}
+
+/* ─────────────────────────────────────────────
+   SCROLL-DRIVEN ANIMATION
+───────────────────────────────────────────── */
+.scroll-section { position: relative; height: 140vh; z-index: 1; }
+.scroll-sticky  { position: sticky; top: 0; height: 100svh; overflow: hidden; }
+#animCanvas     { width: 100%; height: 100%; display: block; background: var(--cream); }
+
+/* Annotation cards — editorial, restrained */
+.acard {
+  position: absolute;
+  background: var(--white);
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  padding: 18px 20px;
+  width: clamp(180px, 28vw, 260px);
+  opacity: 0; transform: translateY(10px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+  pointer-events: none; z-index: 10;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+.acard.on { opacity: 1; transform: translateY(0); }
+
+.acard-num {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--blue);
+  letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 8px;
+}
+.acard-title {
+  font-family: var(--ff-disp); font-size: clamp(14px, 2.2vw, 20px);
+  font-weight: 500; color: var(--ink); line-height: 1.2; margin-bottom: 6px;
+}
+.acard-tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 1px;
+}
+.acard-tag::before { content:'—'; margin-right: 2px; }
+
+.acard-1 { bottom: 26vh; left:  5vw; }
+.acard-2 { bottom: 26vh; right: 5vw; }
+.acard-3 { top:    16vh; right: 5vw; }
+
+/* How it works wrapper */
+.how-section {
+  border-top: 1px solid var(--rule);
+}
+.how-section-head {
+  padding: clamp(48px, 6vw, 72px) var(--pad) clamp(36px, 5vw, 56px);
+  max-width: var(--max); margin: 0 auto;
+  display: flex; align-items: baseline; justify-content: space-between; gap: 32px; flex-wrap: wrap;
+}
+
+/* ─────────────────────────────────────────────
+   NUMBERS / STATS
+───────────────────────────────────────────── */
+.stats-section {
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  background: var(--white);
+}
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  max-width: var(--max); margin: 0 auto;
+  border-left: 1px solid var(--rule);
+}
+.stat-cell {
+  padding: clamp(32px, 5vw, 56px) clamp(20px, 3vw, 40px);
+  border-right: 1px solid var(--rule);
+  position: relative; overflow: hidden;
+  transition: background 0.2s;
+}
+.stat-cell:hover { background: var(--cream); }
+.stat-num {
+  font-family: var(--ff-disp); font-size: clamp(36px, 5vw, 56px);
+  font-weight: 400; color: var(--ink); letter-spacing: -0.04em;
+  line-height: 1; margin-bottom: 8px; transition: color 0.2s;
+}
+.stat-num.counting { color: var(--blue); }
+.stat-label {
+  font-size: 12px; font-weight: 400; color: var(--ink3);
+  letter-spacing: 0.5px; line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   SERVICES
+───────────────────────────────────────────── */
+.services-section {
+  padding: clamp(64px, 9vw, 120px) var(--pad);
+  border-bottom: 1px solid var(--rule);
+}
+.services-inner { max-width: var(--max); margin: 0 auto; }
+
+.section-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 24px; margin-bottom: clamp(40px, 6vw, 64px);
+  padding-bottom: 20px; border-bottom: 1px solid var(--rule);
+}
+.section-kicker {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 3px; text-transform: uppercase; flex-shrink: 0;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-kicker::before { content:''; width: 18px; height: 1px; background: var(--ink3); }
+.section-h2 {
+  font-family: var(--ff-disp); font-size: clamp(28px, 4vw, 44px);
+  font-weight: 400; color: var(--ink); letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.section-h2 em { font-style: italic; color: var(--blue); }
+
+.services-list { display: flex; flex-direction: column; }
+.service-row {
+  display: grid; grid-template-columns: 48px 1fr auto;
+  gap: 24px; align-items: start;
+  padding: clamp(20px, 3vw, 28px) 0;
+  border-bottom: 1px solid var(--rule2);
+  transition: background 0.2s;
+  cursor: default;
+}
+.service-row:hover { background: var(--blue-pale); margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+.service-row:last-child { border-bottom: none; }
+
+.service-index {
+  font-family: var(--ff-mono); font-size: 11px; color: var(--ink3);
+  letter-spacing: 1px; padding-top: 3px;
+}
+.service-body {}
+.service-name {
+  font-family: var(--ff-disp); font-size: clamp(17px, 2.2vw, 22px);
+  font-weight: 500; color: var(--ink); margin-bottom: 6px; letter-spacing: -0.02em;
+}
+.service-desc { font-size: 13px; font-weight: 300; color: var(--ink2); line-height: 1.65; }
+.service-icon { font-size: 18px; opacity: 0.6; padding-top: 2px; }
+
+/* ─────────────────────────────────────────────
+   PROCESS
+───────────────────────────────────────────── */
+.process-section {
+  padding: clamp(64px, 9vw, 120px) var(--pad);
+  background: var(--white); border-bottom: 1px solid var(--rule);
+}
+.process-inner { max-width: var(--max); margin: 0 auto; }
+.process-steps {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 0; margin-top: clamp(40px, 6vw, 64px);
+}
+.process-step {
+  padding: clamp(24px, 3vw, 36px);
+  border-right: 1px solid var(--rule);
+  border-top: 1px solid var(--rule);
+}
+.process-step:first-child { border-left: 1px solid var(--rule); }
+.step-n {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--blue);
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px;
+  display: block;
+}
+.step-title {
+  font-family: var(--ff-disp); font-size: clamp(17px, 2vw, 22px);
+  font-weight: 500; color: var(--ink); margin-bottom: 10px; letter-spacing: -0.02em;
+}
+.step-body { font-size: 13px; font-weight: 300; color: var(--ink2); line-height: 1.7; }
+
+/* ─────────────────────────────────────────────
+   CONTACT
+───────────────────────────────────────────── */
+.contact-section {
+  padding: clamp(64px, 9vw, 120px) var(--pad);
+  border-bottom: 1px solid var(--rule);
+}
+.contact-inner {
+  max-width: var(--max); margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px, 7vw, 80px); align-items: start;
+}
+
+.contact-kicker {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.contact-kicker::before { content:''; width: 18px; height: 1px; background: var(--ink3); }
+
+.contact-h2 {
+  font-family: var(--ff-disp); font-size: clamp(28px, 4vw, 44px);
+  font-weight: 400; color: var(--ink); letter-spacing: -0.03em; line-height: 1.1;
+  margin-bottom: 20px;
+}
+.contact-h2 em { font-style: italic; color: var(--blue); }
+
+.contact-body {
+  font-size: 14px; font-weight: 300; color: var(--ink2); line-height: 1.75;
+  margin-bottom: 32px;
+}
+
+.contact-meta { display: flex; flex-direction: column; gap: 12px; }
+.contact-meta-row {
+  display: flex; align-items: flex-start; gap: 12px;
+  font-size: 13px; color: var(--ink2); font-weight: 300;
+  padding: 12px 0; border-bottom: 1px solid var(--rule2);
+}
+.contact-meta-row:last-child { border-bottom: none; }
+.meta-label {
+  font-family: var(--ff-mono); font-size: 10px; color: var(--ink3);
+  letter-spacing: 1.5px; text-transform: uppercase; flex-shrink: 0; width: 72px; padding-top: 2px;
+}
+.meta-val { color: var(--ink); font-weight: 400; }
+
+/* Form */
+.form-wrap {
+  background: var(--white); border: 1px solid var(--rule); border-radius: 3px; padding: clamp(24px, 4vw, 36px);
+}
+.form-hd { font-family: var(--ff-disp); font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.02em; }
+.form-sub-text { font-size: 13px; font-weight: 300; color: var(--ink2); margin-bottom: 28px; }
+
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.f-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.f-group label {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  color: var(--ink3); letter-spacing: 2px; text-transform: uppercase;
+}
+.req { color: var(--blue); }
+
+input, select, textarea {
+  width: 100%; padding: 12px 14px; border-radius: 3px;
+  background: var(--cream); border: 1px solid var(--rule);
+  font-family: var(--ff-body); font-size: 14px; font-weight: 300; color: var(--ink);
+  outline: none; transition: border-color 0.18s, background 0.18s;
+  -webkit-appearance: none; appearance: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ink); background: var(--white);
+}
+input::placeholder, textarea::placeholder { color: var(--ink3); }
+textarea { resize: vertical; min-height: 90px; }
+select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239a9490' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer;
+}
+
+.f-submit {
+  width: 100%; padding: 14px; border-radius: 3px; border: none;
+  background: var(--ink); color: var(--cream);
+  font-family: var(--ff-body); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: background 0.2s; margin-top: 4px;
+  letter-spacing: 0.2px;
+  -webkit-tap-highlight-color: transparent; touch-action: manipulation;
+}
+.f-submit:hover { background: #222; }
+.f-note { text-align: center; font-size: 11px; color: var(--ink3); margin-top: 12px; line-height: 1.5; }
+
+.f-success { display: none; text-align: center; padding: 36px 16px; }
+.f-success.on { display: block; }
+.f-success-mark { font-family: var(--ff-disp); font-size: 48px; font-style: italic; color: var(--blue); margin-bottom: 12px; }
+.f-success-title { font-family: var(--ff-disp); font-size: 22px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+.f-success-body { font-size: 13px; font-weight: 300; color: var(--ink2); line-height: 1.65; }
+
+/* ─────────────────────────────────────────────
+   CTA STRIP
+───────────────────────────────────────────── */
+.cta-strip {
+  background: var(--ink);
+  padding: clamp(52px, 8vw, 88px) var(--pad);
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 32px; flex-wrap: wrap;
+}
+.cta-text {}
+.cta-strip-label {
+  font-family: var(--ff-mono); font-size: 10px; color: rgba(249,247,244,0.4);
+  letter-spacing: 3px; text-transform: uppercase; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.cta-strip-label::before { content:''; width: 16px; height: 1px; background: rgba(249,247,244,0.4); }
+.cta-strip-h { font-family: var(--ff-disp); font-size: clamp(24px, 4vw, 40px); font-weight: 400; color: var(--cream); letter-spacing: -0.03em; line-height: 1.1; }
+.cta-strip-h em { font-style: italic; }
+.cta-btns-wrap { display: flex; gap: 12px; flex-wrap: wrap; flex-shrink: 0; }
+.btn-cream { background: var(--cream); color: var(--ink); padding: 13px 28px; border-radius: 3px; }
+.btn-cream:hover { background: #fff; }
+.btn-ghost { background: transparent; color: var(--cream); padding: 13px 28px; border-radius: 3px; box-shadow: inset 0 0 0 1px rgba(249,247,244,0.25); }
+.btn-ghost:hover { box-shadow: inset 0 0 0 1px rgba(249,247,244,0.6); }
+.phone-txt { font-family: var(--ff-mono); font-size: 13px; letter-spacing: 0.5px; }
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+footer {
+  background: var(--cream); border-top: 1px solid var(--rule);
+  padding: clamp(40px, 6vw, 64px) var(--pad) clamp(24px, 4vw, 40px);
+}
+.foot-inner { max-width: var(--max); margin: 0 auto; }
+.foot-top {
+  display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px;
+}
+.foot-brand-name {
+  font-family: var(--ff-disp); font-size: 16px; font-weight: 500;
+  color: var(--ink); margin-bottom: 8px; letter-spacing: -0.2px;
+}
+.foot-tagline { font-size: 12px; font-weight: 300; color: var(--ink3); line-height: 1.6; }
+.foot-col h4 {
+  font-family: var(--ff-mono); font-size: 10px; font-weight: 500;
+  color: var(--ink3); letter-spacing: 2.5px; text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.foot-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.foot-col a { font-size: 13px; font-weight: 300; color: var(--ink2); text-decoration: none; transition: color 0.2s; }
+.foot-col a:hover { color: var(--ink); }
+.foot-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 20px; border-top: 1px solid var(--rule); flex-wrap: wrap; gap: 12px;
+}
+.foot-copy { font-size: 11px; font-weight: 300; color: var(--ink3); letter-spacing: 0.2px; }
+.foot-copy span { color: var(--blue); }
+
+/* ─────────────────────────────────────────────
+   REVEAL ON SCROLL
+───────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+
+/* ─────────────────────────────────────────────
+   MOBILE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  /* Nav */
+  #nav { padding: 16px 20px; background: rgba(249,247,244,0.96); backdrop-filter: blur(8px); }
+  #nav.scrolled { top: 8px; width: 94vw; padding: 12px 18px; }
+  .nav-links { display: none; }
+  .nav-mobile-btn { display: inline; }
+
+  /* Hero */
+  .hero { padding: 72px 20px 52px; }
+  h1.hero-h1 { font-size: clamp(40px, 11vw, 64px); }
+  .hero-row { flex-direction: column; align-items: flex-start; gap: 24px; }
+  .hero-sub { max-width: 100%; }
+  .hero-btns { width: 100%; flex-direction: column; }
+  .btn { justify-content: center; padding: 16px 24px; }
+
+  /* Ticker */
+  .ticker-item { padding: 13px 20px; font-size: 12px; }
+
+  /* Scroll section */
+  .scroll-section { height: 200vh; }
+  .acard { width: calc(100vw - 32px); padding: 14px 16px; }
+  .acard-title { font-size: 14px; }
+  .acard-num { font-size: 9px; }
+  .acard-tag { display: none; }
+  .acard-1, .acard-2, .acard-3 { bottom: 12vh; left: 16px; right: 16px; top: auto; }
+
+  /* How it works header */
+  .how-section-head { padding: 40px 20px 28px; flex-direction: column; align-items: flex-start; gap: 12px; }
+
+  /* Reviews */
+  .reviews-section { padding: 48px 20px; }
+  .reviews-top { flex-direction: column; align-items: flex-start; }
+  .reviews-grid { grid-template-columns: 1fr; border-left: none; }
+  .review-card { border-left: 1px solid var(--rule); }
+
+  /* Stats 2×2 */
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-cell:nth-child(3) { border-top: 1px solid var(--rule); }
+  .stat-cell:nth-child(4) { border-top: 1px solid var(--rule); }
+
+  /* Services */
+  .services-section { padding: 52px 20px; }
+  .section-head { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .service-row { grid-template-columns: 32px 1fr; gap: 14px; }
+  .service-icon { display: none; }
+  .service-row:hover { margin: 0; padding-left: 0; padding-right: 0; }
+
+  /* Process — vertical */
+  .process-section { padding: 52px 20px; }
+  .process-steps { grid-template-columns: 1fr; }
+  .process-step { border-right: none; border-left: none; padding: 24px 0; }
+  .process-step:first-child { border-left: none; }
+
+  /* Contact */
+  .contact-section { padding: 52px 20px; }
+  .contact-inner { grid-template-columns: 1fr; gap: 36px; }
+  .f-row { grid-template-columns: 1fr; }
+
+  /* CTA strip */
+  .cta-strip { flex-direction: column; align-items: flex-start; padding: 48px 20px; }
+  .cta-btns-wrap { width: 100%; flex-direction: column; }
+  .cta-btns-wrap .btn { justify-content: center; }
+
+  /* Footer */
+  footer { padding: 40px 20px 28px; }
+  .foot-top { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .foot-bottom { flex-direction: column; align-items: flex-start; gap: 8px; }
+}
+
+@media (max-width: 400px) {
+  h1.hero-h1 { font-size: 36px; }
+  .foot-top { grid-template-columns: 1fr; }
+}
+
+</style>
+</head>
+<body>
+
+<div id="prog"></div>
+
+<!-- ── LOADER ── -->
+<div id="loader">
+  <div class="loader-mark"><strong>[Your Company]</strong> — drain clearing</div>
+  <div class="loader-bar-wrap"><div class="loader-bar-fill" id="lFill"></div></div>
+  <div class="loader-pct" id="lPct">Loading</div>
+</div>
+
+<!-- ── NAVBAR ── -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    [Your Company Name]
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#how-it-works">How it works</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-mobile-btn">Get a quote</a>
+</nav>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <video class="hero-video" id="heroVid" autoplay muted playsinline preload="auto" aria-hidden="true">
+    <source src="hero.mp4" type="video/mp4">
+  </video>
+  <video class="hero-video" id="heroVidRev" muted playsinline preload="auto" aria-hidden="true" style="opacity:0;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;z-index:0;">
+    <source src="hero-reverse.mp4" type="video/mp4">
+  </video>
+  <div class="hero-content">
+    <div class="hero-label">Professional drain &amp; pipe clearing</div>
+    <h1 class="hero-h1">
+      We clear<br>
+      <em>any blockage.</em><br>
+      Guaranteed.
+    </h1>
+    <div class="hero-row">
+      <p class="hero-sub">Fast response, lasting results — for homes and businesses across [Your Area].</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn btn-blue">Get a free quote</a>
+        <a href="#how-it-works" class="btn btn-ink">See it in action ↓</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TICKER ── -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-inner">
+    <div class="ticker-item"><span class="ticker-dot"></span>Same-day service</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Fully insured &amp; certified</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>No fix, no fee</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Fixed-price quotes</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>5-star Google rating</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>24 / 7 emergency callout</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Domestic &amp; commercial</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Same-day service</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Fully insured &amp; certified</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>No fix, no fee</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Fixed-price quotes</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>5-star Google rating</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>24 / 7 emergency callout</div>
+    <div class="ticker-item"><span class="ticker-dot"></span>Domestic &amp; commercial</div>
+  </div>
+</div>
+
+<!-- ── GOOGLE REVIEWS ── -->
+<section class="reviews-section reveal" id="reviews">
+  <div class="reviews-inner">
+    <div class="reviews-top">
+      <div class="reviews-badge">
+        <div class="reviews-g-icon">Google</div>
+        <div class="reviews-score">4.9</div>
+        <div class="reviews-score-detail">
+          <div class="reviews-stars">★★★★★</div>
+          <div class="reviews-count">based on <strong>94 reviews</strong> on Google</div>
+        </div>
+      </div>
+      <div class="reviews-kicker">What customers say</div>
+    </div>
+
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-card-stars">★★★★★</div>
+        <p class="review-text">"Had a badly blocked kitchen drain that two other companies couldn't fix. They were out within the hour and had it completely cleared in under 30 minutes. Genuinely impressed."</p>
+        <div class="review-meta">
+          <div class="review-name">Mark Ellison</div>
+          <div class="review-date">March 2026</div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-stars">★★★★★</div>
+        <p class="review-text">"Called at 8pm on a Sunday with a collapsed drain outside. Arrived within 45 minutes, professional and tidy throughout. Wouldn't use anyone else."</p>
+        <div class="review-meta">
+          <div class="review-name">Diane Farrow</div>
+          <div class="review-date">February 2026</div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="review-card-stars">★★★★★</div>
+        <p class="review-text">"Used them for a commercial property after a major blockage brought the kitchen to a halt. Fast, no-fuss, and reasonably priced. Back up and running same day."</p>
+        <div class="review-meta">
+          <div class="review-name">Tom Baxter</div>
+          <div class="review-date">January 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stats-section reveal" id="specs">
+  <div class="stats-grid">
+    <div class="stat-cell">
+      <div class="stat-num" data-target="98" data-suffix="%">0</div>
+      <div class="stat-label">First-visit<br>success rate</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" data-target="45" data-suffix="min">0</div>
+      <div class="stat-label">Average<br>response time</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" data-target="24" data-suffix="/7">0</div>
+      <div class="stat-label">Emergency<br>availability</div>
+    </div>
+    <div class="stat-cell">
+      <div class="stat-num" data-target="5000" data-suffix="+">0</div>
+      <div class="stat-label">Drains<br>cleared</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SERVICES ── -->
+<section class="services-section" id="services">
+  <div class="services-inner">
+    <div class="section-head">
+      <div class="section-kicker">Services</div>
+      <h2 class="section-h2">Everything your<br><em>pipes need</em></h2>
+    </div>
+    <div class="services-list">
+      <div class="service-row reveal">
+        <div class="service-index">01</div>
+        <div class="service-body">
+          <div class="service-name">Blocked Drains</div>
+          <div class="service-desc">Kitchen sinks, bathroom drains, shower traps — cleared fast with no mess left behind.</div>
+        </div>
+        <div class="service-icon">🚿</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-index">02</div>
+        <div class="service-body">
+          <div class="service-name">Main Sewer Lines</div>
+          <div class="service-desc">Deep blockages in your main drain line cleared with industrial-grade equipment and expertise.</div>
+        </div>
+        <div class="service-icon">🏗️</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-index">03</div>
+        <div class="service-body">
+          <div class="service-name">Commercial Drainage</div>
+          <div class="service-desc">Restaurants, offices, industrial sites — handled with minimal disruption to your business.</div>
+        </div>
+        <div class="service-icon">🏢</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-index">04</div>
+        <div class="service-body">
+          <div class="service-name">CCTV Pipe Survey</div>
+          <div class="service-desc">Camera inspection to diagnose the exact cause of your drainage problem — before any digging.</div>
+        </div>
+        <div class="service-icon">🔬</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-index">05</div>
+        <div class="service-body">
+          <div class="service-name">High-Pressure Jetting</div>
+          <div class="service-desc">Blasts grease, scale, roots, and debris from pipe walls — leaving them clean as new inside.</div>
+        </div>
+        <div class="service-icon">💧</div>
+      </div>
+      <div class="service-row reveal">
+        <div class="service-index">06</div>
+        <div class="service-body">
+          <div class="service-name">24 / 7 Emergency</div>
+          <div class="service-desc">Burst pipes, sewage backups, flooding — on call every hour of every day, no exceptions.</div>
+        </div>
+        <div class="service-icon">🚨</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PROCESS ── -->
+<section class="process-section" id="process">
+  <div class="process-inner">
+    <div class="section-head">
+      <div class="section-kicker">How it works</div>
+      <h2 class="section-h2">Simple, fast,<br><em>transparent</em></h2>
+    </div>
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <span class="step-n">Step 01</span>
+        <div class="step-title">You call or message</div>
+        <p class="step-body">Describe the problem and get a fixed-price quote — no call-out fee just to find out what's wrong.</p>
+      </div>
+      <div class="process-step reveal">
+        <span class="step-n">Step 02</span>
+        <div class="step-title">We show up fast</div>
+        <p class="step-body">A fully-equipped engineer arrives at your door, typically within 45 minutes in most areas.</p>
+      </div>
+      <div class="process-step reveal">
+        <span class="step-n">Step 03</span>
+        <div class="step-title">Problem solved</div>
+        <p class="step-body">We clear it, flush it, verify the flow, and leave your property tidy — or you simply don't pay.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS (pipe animation) ── -->
+<div class="how-section" id="how-it-works">
+  <div class="how-section-head">
+    <div class="section-kicker">See it in action</div>
+    <h2 class="section-h2">Water jetting<br><em>a blockage clear</em></h2>
+  </div>
+  <section class="scroll-section" id="scroll-anim">
+    <div class="scroll-sticky">
+      <canvas id="animCanvas"></canvas>
+
+      <div class="acard acard-1" data-show="0.05" data-hide="0.42">
+        <div class="acard-num">01 — Jetting</div>
+        <div class="acard-title">High-pressure<br>water sent in.</div>
+        <div class="acard-tag">Water jetting</div>
+      </div>
+
+      <div class="acard acard-2" data-show="0.42" data-hide="0.72">
+        <div class="acard-num">02 — Clearing</div>
+        <div class="acard-title">Blockage broken<br>and flushed out.</div>
+        <div class="acard-tag">No chemicals</div>
+      </div>
+
+      <div class="acard acard-3" data-show="0.72" data-hide="0.97">
+        <div class="acard-num">03 — Result</div>
+        <div class="acard-title">Full flow<br>restored.</div>
+        <div class="acard-tag">Flow verified</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ── CONTACT ── -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <!-- Left -->
+    <div class="reveal">
+      <div class="contact-kicker">Get in touch</div>
+      <h2 class="contact-h2">We reply within<br><em>the hour.</em></h2>
+      <p class="contact-body">Fill in the form and one of our engineers will be in touch to discuss your drainage issue. No obligation, no pressure.</p>
+      <div class="contact-meta">
+        <div class="contact-meta-row">
+          <span class="meta-label">Phone</span>
+          <span class="meta-val">[000 000 0000] — available 24 / 7</span>
+        </div>
+        <div class="contact-meta-row">
+          <span class="meta-label">Email</span>
+          <span class="meta-val">[your@email.com]</span>
+        </div>
+        <div class="contact-meta-row">
+          <span class="meta-label">Area</span>
+          <span class="meta-val">[Your Area] and surrounding regions</span>
+        </div>
+        <div class="contact-meta-row">
+          <span class="meta-label">Response</span>
+          <span class="meta-val">Within 60 minutes, every time</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form -->
+    <div class="form-wrap reveal">
+      <div class="form-hd">Send a message</div>
+      <div class="form-sub-text">Tell us about your issue and we'll get back to you fast.</div>
+
+      <div id="fFields">
+        <div class="f-row">
+          <div class="f-group">
+            <label>First name <span class="req">*</span></label>
+            <input type="text" id="fname" placeholder="Jane" autocomplete="given-name">
+          </div>
+          <div class="f-group">
+            <label>Last name <span class="req">*</span></label>
+            <input type="text" id="lname" placeholder="Smith" autocomplete="family-name">
+          </div>
+        </div>
+        <div class="f-group">
+          <label>Phone <span class="req">*</span></label>
+          <input type="tel" id="fphone" placeholder="07700 900 000" autocomplete="tel">
+        </div>
+        <div class="f-group">
+          <label>Email</label>
+          <input type="email" id="femail" placeholder="jane@example.com" autocomplete="email">
+        </div>
+        <div class="f-group">
+          <label>Issue type <span class="req">*</span></label>
+          <select id="fissue">
+            <option value="" disabled selected>Select a service…</option>
+            <option>Blocked drain / sink</option>
+            <option>Blocked toilet</option>
+            <option>Main sewer blockage</option>
+            <option>High-pressure jetting</option>
+            <option>CCTV pipe survey</option>
+            <option>Emergency callout</option>
+            <option>Commercial drainage</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="f-group">
+          <label>Details</label>
+          <textarea id="fmsg" placeholder="Where is the blockage? How long has it been like this? Anything you've already tried?"></textarea>
+        </div>
+        <button class="f-submit" onclick="sendForm()">Send message →</button>
+        <div class="f-note">🔒 Your details are kept private and only used to respond to your enquiry.</div>
+      </div>
+
+      <div class="f-success" id="fSuccess">
+        <div class="f-success-mark">✓</div>
+        <div class="f-success-title">Message sent</div>
+        <div class="f-success-body">We'll be in touch within the hour. For urgent issues, call <strong>[000 000 0000]</strong>.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA STRIP ── -->
+<div class="cta-strip">
+  <div class="cta-text">
+    <div class="cta-strip-label">Available right now</div>
+    <div class="cta-strip-h">Got a blocked drain?<br><em>Let's fix it today.</em></div>
+  </div>
+  <div class="cta-btns-wrap">
+    <a href="tel:00000000000" class="btn btn-cream">📞 &nbsp;<span class="phone-txt">[000 000 0000]</span></a>
+    <a href="#contact" class="btn btn-ghost">Send a message</a>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand-name">[Your Company Name]</div>
+        <div class="foot-tagline">Professional drain &amp; pipe clearing for homes and businesses across [Your Area].</div>
+      </div>
+      <div class="foot-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Blocked Drains</a></li>
+          <li><a href="#services">Sewer Lines</a></li>
+          <li><a href="#services">Commercial</a></li>
+          <li><a href="#services">CCTV Survey</a></li>
+          <li><a href="#services">Emergency</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Reviews</a></li>
+          <li><a href="#">Coverage</a></li>
+          <li><a href="#">Careers</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:00000000000">[000 000 0000]</a></li>
+          <li><a href="mailto:your@email.com">[your@email.com]</a></li>
+          <li><a href="#">[Your Area, UK]</a></li>
+          <li><a href="#contact">Send a message</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <div class="foot-copy">© 2026 <span>[Your Company Name]</span>. All rights reserved.</div>
+      <div class="foot-copy">Serving [Your Area] 24 / 7.</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── JS ── -->
+<script>
+'use strict';
+
+/* FRAMES */
+const TOTAL = 127;
+const frames = new Array(TOTAL);
+let loaded = 0, ready = false, cur = 0, rafQ = false;
+
+const canvas = document.getElementById('animCanvas');
+const ctx    = canvas.getContext('2d');
+
+function resize() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  const W = window.innerWidth, H = window.innerHeight;
+  canvas.width = W * dpr; canvas.height = H * dpr;
+  canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+  ctx.scale(dpr, dpr);
+  if (ready) draw(cur);
+}
+window.addEventListener('resize', resize, { passive: true });
+resize();
+
+function draw(i) {
+  const img = frames[i];
+  if (!img || !img.complete || !img.naturalWidth) return;
+  const W = window.innerWidth, H = window.innerHeight;
+  /* White fill so video blends cleanly */
+  ctx.fillStyle = '#f9f7f4';
+  ctx.fillRect(0, 0, W, H);
+  const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
+  const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
+  ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+}
+
+const lFill = document.getElementById('lFill');
+const lPct  = document.getElementById('lPct');
+let revealed = false;
+
+function revealSite() {
+  if (revealed) return;
+  revealed = true;
+  ready = true;
+  document.getElementById('loader').classList.add('hidden');
+  draw(0);
+}
+
+// Hard fallback — show site after 5s no matter what
+const loadTimer = setTimeout(revealSite, 5000);
+
+for (let i = 1; i <= TOTAL; i++) {
+  const img = new Image();
+  img.src = `frames/frame_${String(i).padStart(4,'0')}.jpg`;
+  img.onload = img.onerror = () => {
+    loaded++;
+    const p = Math.round(loaded / TOTAL * 100);
+    lFill.style.width = p + '%';
+    lPct.textContent  = p + '%';
+    // Reveal as soon as first frame is ready
+    if (loaded === 1) revealSite();
+    if (loaded === TOTAL) clearTimeout(loadTimer);
+  };
+  frames[i - 1] = img;
+}
+
+/* SCROLL */
+const scrollSec = document.querySelector('.scroll-section');
+const acards    = document.querySelectorAll('.acard');
+
+window.addEventListener('scroll', () => {
+  const sy = window.scrollY;
+  const dH = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('prog').style.width = (sy / dH * 100) + '%';
+  document.getElementById('nav').classList.toggle('scrolled', sy > 50);
+
+  if (!scrollSec || !ready) return;
+  const rect = scrollSec.getBoundingClientRect();
+  const sH   = scrollSec.offsetHeight - window.innerHeight;
+  const into  = -rect.top;
+  if (into < 0 || into > sH) return;
+
+  const p   = into / sH;
+  const idx = Math.min(TOTAL - 1, Math.floor(p * TOTAL));
+
+  if (idx !== cur) {
+    cur = idx;
+    if (!rafQ) { rafQ = true; requestAnimationFrame(() => { draw(cur); rafQ = false; }); }
+  }
+
+  acards.forEach(c => {
+    const on = p >= parseFloat(c.dataset.show) && p < parseFloat(c.dataset.hide);
+    c.classList.toggle('on', on);
+  });
+}, { passive: true });
+
+/* COUNT-UP */
+function easeOut(t) { return 1 - Math.pow(2, -10 * t); }
+function countUp(el) {
+  const target = parseInt(el.dataset.target), suffix = el.dataset.suffix || '';
+  const t0 = performance.now(), dur = 1400;
+  el.classList.add('counting');
+  (function tick(now) {
+    const t = Math.min((now - t0) / dur, 1);
+    el.textContent = Math.floor(easeOut(t) * target).toLocaleString() + suffix;
+    t < 1 ? requestAnimationFrame(tick) : (el.textContent = target.toLocaleString() + suffix, el.classList.remove('counting'));
+  })(t0);
+}
+const io = new IntersectionObserver(es => es.forEach((e, i) => {
+  if (e.isIntersecting) { setTimeout(() => countUp(e.target), i * 160); io.unobserve(e.target); }
+}), { threshold: 0.6 });
+document.querySelectorAll('.stat-num').forEach(el => io.observe(el));
+
+/* SCROLL REVEAL */
+const revealIO = new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); revealIO.unobserve(e.target); }
+}), { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => revealIO.observe(el));
+
+/* HERO VIDEO PING-PONG — two videos, both play forward for smooth reverse */
+(function() {
+  const fwd = document.getElementById('heroVid');
+  const rev = document.getElementById('heroVidRev');
+  if (!fwd || !rev) return;
+
+  function showFwd() {
+    fwd.style.opacity = '1';
+    rev.style.opacity = '0';
+    fwd.currentTime = 0;
+    fwd.play();
+  }
+  function showRev() {
+    rev.style.opacity = '1';
+    fwd.style.opacity = '0';
+    rev.currentTime = 0;
+    rev.play();
+  }
+
+  fwd.addEventListener('ended', showRev);
+  rev.addEventListener('ended', showFwd);
+})();
+
+/* FORM */
+function sendForm() {
+  const fn = document.getElementById('fname').value.trim();
+  const ln = document.getElementById('lname').value.trim();
+  const ph = document.getElementById('fphone').value.trim();
+  const is = document.getElementById('fissue').value;
+  if (!fn || !ln) { alert('Please enter your name.'); return; }
+  if (!ph)        { alert('Please enter a phone number.'); return; }
+  if (!is)        { alert('Please select the type of issue.'); return; }
+
+  const em  = document.getElementById('femail').value.trim();
+  const msg = document.getElementById('fmsg').value.trim();
+  const to  = '[your@email.com]';
+  const sub = encodeURIComponent(`Enquiry: ${is} — ${fn} ${ln}`);
+  const bod = encodeURIComponent(
+    `Name: ${fn} ${ln}\nPhone: ${ph}\nEmail: ${em || 'Not provided'}\n\nService: ${is}\n\nDetails:\n${msg || 'None provided.'}`
+  );
+  window.location.href = `mailto:${to}?subject=${sub}&body=${bod}`;
+
+  document.getElementById('fFields').style.display = 'none';
+  document.getElementById('fSuccess').classList.add('on');
+}
+</script>
+</body>
+</html>
