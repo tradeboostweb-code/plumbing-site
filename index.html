@@ -1165,9 +1165,8 @@ const ctx    = canvas.getContext('2d');
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const isMobile = window.innerWidth < 768;
   const W = window.innerWidth;
-  const H = isMobile ? Math.round(W * (1076 / 1924)) : window.innerHeight;
+  const H = window.innerHeight;
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
