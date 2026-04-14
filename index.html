@@ -1156,6 +1156,10 @@ footer {
 <script>
 'use strict';
 
+/* SCROLL RESTORE — always start at top */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
 /* FRAMES */
 const TOTAL = 127;
 const frames = new Array(TOTAL);
