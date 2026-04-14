@@ -351,25 +351,12 @@ h1.hero-h1 em { font-style: normal; color: var(--blue); }
   content: ''; position: absolute; left: 0; right: 0; z-index: 5; pointer-events: none;
 }
 .scroll-sticky::before {
-  top: 0; height: 22%;
+  top: 0; height: 25%;
   background: linear-gradient(to bottom, var(--cream) 0%, transparent 100%);
 }
 .scroll-sticky::after {
-  bottom: 0; height: 22%;
+  bottom: 0; height: 25%;
   background: linear-gradient(to top, var(--cream) 0%, transparent 100%);
-}
-/* Side fades on mobile to blend contain-fit letterbox bars */
-@media (max-width: 767px) {
-  .scroll-sticky::before {
-    background: linear-gradient(to bottom, var(--cream) 0%, transparent 100%),
-                linear-gradient(to right, var(--cream) 0%, transparent 8%),
-                linear-gradient(to left, var(--cream) 0%, transparent 8%);
-  }
-  .scroll-sticky::after {
-    background: linear-gradient(to top, var(--cream) 0%, transparent 100%),
-                linear-gradient(to right, var(--cream) 0%, transparent 8%),
-                linear-gradient(to left, var(--cream) 0%, transparent 8%);
-  }
 }
 
 /* Annotation cards — editorial, restrained */
@@ -706,8 +693,9 @@ footer {
   /* Ticker */
   .ticker-item { padding: 13px 20px; font-size: 12px; }
 
-  /* Scroll section */
-  .scroll-section { height: 140vh; }
+  /* Scroll section — canvas sized to video aspect ratio (1924x1076 ≈ 56vw tall) */
+  .scroll-section { height: 180vh; }
+  .scroll-sticky  { height: 56vw; }
   .acard { width: calc(100vw - 32px); padding: 14px 16px; }
   .acard-title { font-size: 14px; }
   .acard-num { font-size: 9px; }
@@ -1188,10 +1176,7 @@ function draw(i) {
   const W = window.innerWidth, H = window.innerHeight;
   ctx.fillStyle = '#f9f7f4';
   ctx.fillRect(0, 0, W, H);
-  const isMobile = W < 768;
-  const s = isMobile
-    ? Math.min(W / img.naturalWidth, H / img.naturalHeight)
-    : Math.max(W / img.naturalWidth, H / img.naturalHeight);
+  const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
   const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
   ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
 }
