@@ -688,7 +688,6 @@ footer {
 
   /* Hero */
   .hero { padding: 72px 20px 52px; }
-  .hero-video { object-fit: contain; object-position: center; }
   h1.hero-h1 { font-size: clamp(40px, 11vw, 64px); }
   .hero-row { flex-direction: column; align-items: flex-start; gap: 24px; }
   .hero-sub { max-width: 100%; }
@@ -701,7 +700,7 @@ footer {
   /* Scroll section — canvas centred within full-height sticky panel */
   .scroll-section { height: 300vh; }
   .scroll-sticky  { height: 100svh; position: sticky; top: 0; display: flex; align-items: center; }
-  #animCanvas     { width: 100%; height: auto; mix-blend-mode: multiply; }
+  #animCanvas     { width: 100%; height: auto; }
   .acard { width: calc(100vw - 32px); padding: 14px 16px; }
   .acard-title { font-size: 14px; }
   .acard-num { font-size: 9px; }
@@ -1185,9 +1184,11 @@ function draw(i) {
   const H = parseInt(canvas.style.height) || window.innerHeight;
   ctx.fillStyle = '#f9f7f4';
   ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'multiply';
   const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
   const dw = img.naturalWidth * s, dh = img.naturalHeight * s;
   ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  ctx.globalCompositeOperation = 'source-over';
 }
 
 const lFill = document.getElementById('lFill');
