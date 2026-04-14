@@ -697,9 +697,9 @@ footer {
   /* Ticker */
   .ticker-item { padding: 13px 20px; font-size: 12px; }
 
-  /* Scroll section */
-  .scroll-section { height: 180vh; }
-  .scroll-sticky  { height: 75vw; }
+  /* Scroll section — canvas matches video aspect ratio exactly (1924×1076) */
+  .scroll-section { height: 160vh; }
+  .scroll-sticky  { height: calc(100vw * 1076 / 1924); position: relative; }
   .acard { width: calc(100vw - 32px); padding: 14px 16px; }
   .acard-title { font-size: 14px; }
   .acard-num { font-size: 9px; }
@@ -1165,7 +1165,9 @@ const ctx    = canvas.getContext('2d');
 
 function resize() {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  const W = window.innerWidth, H = window.innerHeight;
+  const isMobile = window.innerWidth < 768;
+  const W = window.innerWidth;
+  const H = isMobile ? Math.round(W * (1076 / 1924)) : window.innerHeight;
   canvas.width = W * dpr; canvas.height = H * dpr;
   canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
   ctx.scale(dpr, dpr);
@@ -1177,7 +1179,8 @@ resize();
 function draw(i) {
   const img = frames[i];
   if (!img || !img.complete || !img.naturalWidth) return;
-  const W = window.innerWidth, H = window.innerHeight;
+  const W = parseInt(canvas.style.width)  || window.innerWidth;
+  const H = parseInt(canvas.style.height) || window.innerHeight;
   ctx.fillStyle = '#f9f7f4';
   ctx.fillRect(0, 0, W, H);
   const s = Math.max(W / img.naturalWidth, H / img.naturalHeight);
