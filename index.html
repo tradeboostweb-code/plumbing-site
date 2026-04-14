@@ -359,8 +359,8 @@ h1.hero-h1 em { font-style: normal; color: var(--blue); }
   background: linear-gradient(to top, var(--cream) 0%, transparent 100%);
 }
 @media (max-width: 767px) {
-  .scroll-sticky::before { height: 30%; }
-  .scroll-sticky::after  { height: 30%; }
+  .scroll-sticky::before { height: 45%; background: linear-gradient(to bottom, var(--cream) 0%, var(--cream) 40%, transparent 100%); }
+  .scroll-sticky::after  { height: 45%; background: linear-gradient(to top,   var(--cream) 0%, var(--cream) 40%, transparent 100%); }
 }
 
 /* Annotation cards — editorial, restrained */
@@ -400,7 +400,7 @@ h1.hero-h1 em { font-style: normal; color: var(--blue); }
 /* How it works wrapper */
 .how-section {
   border-top: 1px solid var(--rule);
-  overflow: hidden;
+  overflow: clip;
 }
 .how-section-head {
   padding: clamp(48px, 6vw, 72px) var(--pad) clamp(36px, 5vw, 56px);
