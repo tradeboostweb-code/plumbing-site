@@ -351,12 +351,16 @@ h1.hero-h1 em { font-style: normal; color: var(--blue); }
   content: ''; position: absolute; left: 0; right: 0; z-index: 5; pointer-events: none;
 }
 .scroll-sticky::before {
-  top: 0; height: 25%;
+  top: 0; height: 20%;
   background: linear-gradient(to bottom, var(--cream) 0%, transparent 100%);
 }
 .scroll-sticky::after {
-  bottom: 0; height: 25%;
+  bottom: 0; height: 20%;
   background: linear-gradient(to top, var(--cream) 0%, transparent 100%);
+}
+@media (max-width: 767px) {
+  .scroll-sticky::before { height: 15%; }
+  .scroll-sticky::after  { height: 15%; }
 }
 
 /* Annotation cards — editorial, restrained */
@@ -693,9 +697,9 @@ footer {
   /* Ticker */
   .ticker-item { padding: 13px 20px; font-size: 12px; }
 
-  /* Scroll section — canvas sized to video aspect ratio (1924x1076 ≈ 56vw tall) */
+  /* Scroll section */
   .scroll-section { height: 180vh; }
-  .scroll-sticky  { height: 56vw; }
+  .scroll-sticky  { height: 75vw; }
   .acard { width: calc(100vw - 32px); padding: 14px 16px; }
   .acard-title { font-size: 14px; }
   .acard-num { font-size: 9px; }
